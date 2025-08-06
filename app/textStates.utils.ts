@@ -6,11 +6,11 @@ export const getQuestion = (currentState: number): string => {
     return "What is the SR conversion for this week?";
   }
 
-  if (currentState >= 3 && currentState <= 4) {
+  if (currentState >= 3 && currentState <= 5) {
     return "Why is the SR conversion for this week 54%?";
   }
 
-  if (currentState === 5) {
+  if (currentState >= 6) {
     return "Why?";
   }
   return "";
@@ -20,15 +20,11 @@ export const getAnswer = (currentState: number): string => {
   if (currentState === 0) {
     return "";
   }
-  if (currentState === 2) {
+  if (currentState >= 2 && currentState <= 5) {
     return "<p>The SR conversion for this month is <b>54%</b></p>";
   }
 
-  if (currentState >= 3 && currentState <= 4) {
-    return "<p>Let me check across dimensions</p>";
-  }
-
-  if (currentState === 6) {
+  if (currentState === 7) {
     return "<p>Analysing across PGs</p>";
   }
 

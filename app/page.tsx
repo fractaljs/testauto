@@ -13,7 +13,7 @@ export default function Home() {
   const [askingQuestion, setAskingQuestion] = useState<boolean>(false);
 
   const startDemo = async () => {
-    await delay(1000);
+    await delay(100);
     textToSpeech("What is the SR conversion for this week?");
     await delay(4000);
     setCurrentState(1);
@@ -25,9 +25,15 @@ export default function Home() {
     setCurrentState(3);
     await delay(1000);
     textToSpeech("Ah!, I can see that UPI SR is less than last month");
-    await delay(6000);
+    await delay(5000);
     setCurrentState(4);
     textToSpeech("Why?");
+    setCurrentState(5);
+    await delay(3000);
+    textToSpeech("Let me check that across PGs");
+    setCurrentState(6);
+    await delay(3000);
+    setCurrentState(7);
     // await delay(5000);
     // setCurrentState(5);
     // await delay(1000);
@@ -38,7 +44,7 @@ export default function Home() {
   };
 
   const goToNextState = () => {
-    setCurrentState((prev) => Math.min(5, prev + 1)); // Updated max state to 3
+    setCurrentState((prev) => Math.min(6, prev + 1)); // Updated max state to 3
   };
 
   return (
@@ -60,7 +66,7 @@ export default function Home() {
         <button
           className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={goToNextState}
-          disabled={currentState === 5}
+          disabled={currentState === 6}
         >
           Next →
         </button>
@@ -110,7 +116,7 @@ const LeftPannel = ({ currentState }: { currentState: number }) => {
 
 const RightPannel = ({ currentState }: { currentState: number }) => {
   const renderContent = () => {
-    if (currentState >= 2 && currentState <= 4) {
+    if (currentState >= 2) {
       return <SRUIElemets currentState={currentState} />;
     }
     return null;

@@ -24,8 +24,12 @@ export const getAnswer = (currentState: number): string => {
     return "<p>The SR conversion for this month is <b>54%</b></p>";
   }
 
-  if (currentState === 7) {
+  if (currentState >= 7 && currentState <= 8) {
     return "<p>Analysing across PGs</p>";
+  }
+
+  if (currentState === 9) {
+    return "<h2>HDFC Reported an outage on there end last week</h2>";
   }
 
   return "";

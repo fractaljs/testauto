@@ -10,7 +10,7 @@ import {
   Tooltip,
   LabelList,
 } from "recharts";
-import { useSpeechSynthesis } from "../../lib/hooks/useSpeechSynthesis";
+import { textToSpeech } from "../../lib/tts";
 
 export type BarChartProps = {
   chartData?: { [key: string]: number | string }[];
@@ -72,12 +72,6 @@ const BarChart = ({
   const [currentBarIndex, setCurrentBarIndex] = useState(-1);
   const [isNarrating, setIsNarrating] = useState(false);
 
-  const { speak, cancel, isSupported } = useSpeechSynthesis({
-    rate: 0.9,
-    pitch: 1,
-    volume: 0.8,
-  });
-
   const handleNarrationComplete = useCallback(() => {
     setIsNarrating(false);
     // Move to next bar after audio completes
@@ -85,17 +79,23 @@ const BarChart = ({
   }, []);
 
   const speakBarData = useCallback(
-    (barData: (typeof defaultChartData)[0]) => {
-      if (!audioEnabled || !isSupported || !barData.audio) {
-        // If audio is disabled or not supported, move to next bar after a short delay
+    async (barData: (typeof defaultChartData)[0]) => {
+      if (!audioEnabled || !barData.audio) {
+        // If audio is disabled, move to next bar after a short delay
         setTimeout(() => setCurrentBarIndex((prev) => prev + 1), 800);
         return;
       }
 
       setIsNarrating(true);
-      speak(barData.audio as string, handleNarrationComplete);
+      try {
+        await textToSpeech(barData.audio as string, handleNarrationComplete);
+      } catch (error) {
+        console.error("Text-to-speech error:", error);
+        // If TTS fails, still move to next bar
+        handleNarrationComplete();
+      }
     },
-    [audioEnabled, isSupported, speak, handleNarrationComplete]
+    [audioEnabled, handleNarrationComplete]
   );
 
   // Initialize chart data and start animation
@@ -105,7 +105,6 @@ const BarChart = ({
     setData([]);
     setCurrentBarIndex(-1);
     setIsNarrating(false);
-    cancel();
 
     // Start with first bar after a short delay
     const startTimeout = setTimeout(() => {
@@ -114,9 +113,8 @@ const BarChart = ({
 
     return () => {
       clearTimeout(startTimeout);
-      cancel();
     };
-  }, [chartData, cancel]);
+  }, [chartData]);
 
   // Handle progression through bars based on currentBarIndex
   useEffect(() => {

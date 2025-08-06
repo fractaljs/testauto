@@ -3,8 +3,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { textToSpeech } from "@/lib/tts";
 import BarChart, { BarChartProps } from "./components/BarChart";
+import AudioTable from "./components/AudioTable";
 import { AnimatePresence, motion } from "motion/react";
 import { getQuestion, getAnswer } from "./textStates.utils";
+import LineChart from "./components/LineChart";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -34,6 +36,16 @@ export default function Home() {
     setCurrentState(6);
     await delay(3000);
     setCurrentState(7);
+    await delay(1000);
+    setCurrentState(8);
+    await delay(9000);
+    textToSpeech(
+      "Let me check the reason for the drop, I will check our logs and emails to check if there were any outages"
+    );
+    await delay(5000);
+    setCurrentState(9);
+    await delay(10000);
+    setCurrentState(10);
     // await delay(5000);
     // setCurrentState(5);
     // await delay(1000);
@@ -44,7 +56,7 @@ export default function Home() {
   };
 
   const goToNextState = () => {
-    setCurrentState((prev) => Math.min(6, prev + 1)); // Updated max state to 3
+    setCurrentState((prev) => Math.min(9, prev + 1)); // Updated max state to 3
   };
 
   return (
@@ -66,7 +78,7 @@ export default function Home() {
         <button
           className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={goToNextState}
-          disabled={currentState === 6}
+          disabled={currentState === 9}
         >
           Next →
         </button>
@@ -81,38 +93,6 @@ export default function Home() {
     </div>
   );
 }
-
-const LeftPannel = ({ currentState }: { currentState: number }) => {
-  const [question, setQuestion] = useState<string>(getQuestion(currentState));
-  const [answer, setAnswer] = useState<string>(getAnswer(currentState));
-
-  useEffect(() => {
-    setQuestion(getQuestion(currentState));
-    setAnswer(getAnswer(currentState));
-  }, [currentState]);
-
-  return (
-    <div className="w-1/3 h-full flex flex-col justify-center">
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.h1
-          key={question}
-          className="text-[rgba(255, 255, 255, 0.4)] text-[24px] font-medium pb-8"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-        >
-          {question}
-        </motion.h1>
-      </AnimatePresence>
-      <div
-        className="text-[rgba(255, 255, 255, 0.4)] text-[16px] font-medium pb-8"
-        dangerouslySetInnerHTML={{
-          __html: answer,
-        }}
-      ></div>
-    </div>
-  );
-};
 
 const RightPannel = ({ currentState }: { currentState: number }) => {
   const renderContent = () => {
@@ -144,6 +124,59 @@ const SRUIElemets = ({ currentState }: { currentState: number }) => {
     ],
   };
 
+  const lineChartData = [
+    {
+      month: "Week 1",
+      uptime: 98.5,
+      audio: "In week 1, HDFC uptime was 98.5%",
+    },
+    {
+      month: "Week 2",
+      uptime: 99.2,
+      audio: "In week 2, uptime improved to 99.2%",
+    },
+    {
+      month: "Week 3",
+      uptime: 97.8,
+      audio: "In week 3, there was a drop to 97.8%",
+    },
+    {
+      month: "Week 4",
+      uptime: 96.5,
+      audio: "In week 4, uptime dropped further to 96.5%",
+    },
+  ];
+
+  const tableData = [
+    {
+      pg: "UPI",
+      sr: "45%",
+      volume: "1.2M",
+      audio:
+        "UPI has a success rate of 45 percent with a volume of 1.2 million transactions",
+    },
+    {
+      pg: "Card",
+      sr: "78%",
+      volume: "800K",
+      audio:
+        "Card payments show a success rate of 78 percent with 800 thousand transactions",
+    },
+    {
+      pg: "Net Banking",
+      sr: "92%",
+      volume: "300K",
+      audio:
+        "Net Banking has the highest success rate at 92 percent with 300 thousand transactions",
+    },
+  ];
+
+  const tableColumns = [
+    { key: "pg", label: "Payment Gateway", width: "w-1/3" },
+    { key: "sr", label: "Success Rate", width: "w-1/3" },
+    { key: "volume", label: "Volume", width: "w-1/3" },
+  ];
+
   console.log(
     "SRUIElemets render - currentState:",
     currentState,
@@ -163,14 +196,92 @@ const SRUIElemets = ({ currentState }: { currentState: number }) => {
     );
   }, []); // Empty dependency array means it only renders once
 
+  // Memoize the table component
+  const tableComponent = React.useMemo(() => {
+    return (
+      <AudioTable
+        // tableData={tableData}
+        // columns={tableColumns}
+        audioEnabled={true}
+        highlightColor="bg-blue-500/20 border-blue-500"
+      />
+    );
+  }, []);
+
+  const lineChartComponent = React.useMemo(() => {
+    return (
+      <LineChart
+        chartData={lineChartData}
+        xAxisKey="month"
+        yAxisKey="uptime"
+        lineColor="#ef4444"
+        audioEnabled={true}
+      />
+    );
+  }, []);
+
   return (
     <div className="flex flex-col items-center justify-center gap-7">
-      <div className="w-100 h-96">{chartComponent}</div>
-      {currentState >= 4 && (
+      {/* <AnimatePresence initial={false}> */}
+      {currentState >= 2 && currentState <= 7 && (
+        <motion.div key="chart" className="w-100 h-96">
+          {chartComponent}
+        </motion.div>
+      )}
+      {currentState >= 4 && currentState <= 7 && (
         <div className="w-full text-center">
           <p className="text-white text-lg">UPI SR is less than last month</p>
         </div>
       )}
+      {/* </AnimatePresence> */}
+      {currentState >= 8 && currentState <= 9 && (
+        <div className="w-full max-w-2xl">
+          <h3 className="text-white text-lg mb-4 text-center">
+            Payment Gateway Analysis
+          </h3>
+          {tableComponent}
+        </div>
+      )}
+      {currentState === 10 && (
+        <div className="w-full max-w-4xl">
+          <h3 className="text-white text-lg mb-4 text-center">
+            HDFC Reliability/Uptime Analysis - Last Month
+          </h3>
+          <div className="w-full h-96">{lineChartComponent}</div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const LeftPannel = ({ currentState }: { currentState: number }) => {
+  const [question, setQuestion] = useState<string>(getQuestion(currentState));
+  const [answer, setAnswer] = useState<string>(getAnswer(currentState));
+
+  useEffect(() => {
+    setQuestion(getQuestion(currentState));
+    setAnswer(getAnswer(currentState));
+  }, [currentState]);
+
+  return (
+    <div className="w-1/3 h-full flex flex-col justify-center">
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.h1
+          key={question}
+          className="text-[rgba(255, 255, 255, 0.4)] text-[24px] font-medium pb-8"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+        >
+          {question}
+        </motion.h1>
+      </AnimatePresence>
+      <div
+        className="text-[rgba(255, 255, 255, 0.4)] text-[16px] font-medium pb-8"
+        dangerouslySetInnerHTML={{
+          __html: answer,
+        }}
+      ></div>
     </div>
   );
 };

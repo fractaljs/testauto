@@ -167,11 +167,11 @@ const BarChart = ({
           <YAxis axisLine={false} tickLine={false} />
           <Tooltip content={<CustomTooltip />} cursor={false} />
           <Bar dataKey={yAxisKey} fill={barColor}>
-            {/* <LabelList
+            <LabelList
               dataKey={yAxisKey}
               position="top"
               className="fill-current text-sm font-medium"
-            /> */}
+            />
           </Bar>
         </RechartsBarChart>
       </ResponsiveContainer>

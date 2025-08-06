@@ -7,6 +7,7 @@ import AudioTable from "./components/AudioTable";
 import { AnimatePresence, motion } from "motion/react";
 import { getQuestion, getAnswer } from "./textStates.utils";
 import LineChart from "./components/LineChart";
+import ComparativeBarChartPage from "./components/CompBars";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -15,40 +16,39 @@ export default function Home() {
   const [askingQuestion, setAskingQuestion] = useState<boolean>(false);
 
   const startDemo = async () => {
+    setCurrentState(0);
     await delay(100);
-    textToSpeech("What is the SR conversion for this week?");
-    await delay(4000);
+    textToSpeech("What is the SR conversion for this month?");
+    await delay(3000);
     setCurrentState(1);
     await delay(3000);
     setCurrentState(2);
-    await delay(10000);
-    textToSpeech("Why is the SR conversion for this week 54%?");
-    await delay(6000);
+    await delay(9000);
+    textToSpeech("Why is the SR conversion for this month 54%?");
+    await delay(5000);
     setCurrentState(3);
     await delay(1000);
-    textToSpeech("Ah!, I can see that UPI SR is less than last month");
-    await delay(5000);
     setCurrentState(4);
+    textToSpeech("Ah!, I can see that UPI SR is less than last month");
+
+    await delay(6000);
     textToSpeech("Why?");
     setCurrentState(5);
-    await delay(3000);
+    await delay(1000);
     textToSpeech("Let me check that across PGs");
     setCurrentState(6);
     await delay(3000);
     setCurrentState(7);
     await delay(1000);
     setCurrentState(8);
-    await delay(9000);
+    await delay(10000);
     textToSpeech(
       "Let me check the reason for the drop, I will check our logs and emails to check if there were any outages"
     );
-    await delay(5000);
+    await delay(8000);
     setCurrentState(9);
     await delay(10000);
-    setCurrentState(10);
-    // await delay(5000);
-    // setCurrentState(5);
-    // await delay(1000);
+    // setCurrentState(10);
   };
 
   const goToPreviousState = () => {
@@ -117,7 +117,7 @@ const SRUIElemets = ({ currentState }: { currentState: number }) => {
         audio: "The SR for the month of January is 54%",
       },
       {
-        month: "February",
+        month: "December",
         SR: 73,
         audio: "which is 19% less than the last month",
       },
@@ -177,13 +177,6 @@ const SRUIElemets = ({ currentState }: { currentState: number }) => {
     { key: "volume", label: "Volume", width: "w-1/3" },
   ];
 
-  console.log(
-    "SRUIElemets render - currentState:",
-    currentState,
-    "data:",
-    actualData.data
-  );
-
   // Memoize the chart to prevent re-rendering when only currentState changes
   const chartComponent = React.useMemo(() => {
     return (
@@ -224,13 +217,16 @@ const SRUIElemets = ({ currentState }: { currentState: number }) => {
     <div className="flex flex-col items-center justify-center gap-7">
       {/* <AnimatePresence initial={false}> */}
       {currentState >= 2 && currentState <= 7 && (
-        <motion.div key="chart" className="w-100 h-96">
-          {chartComponent}
-        </motion.div>
+        // <motion.div key="chart" className="w-100 h-96">
+        //   {chartComponent}
+        // </motion.div>
+        <ComparativeBarChartPage />
       )}
       {currentState >= 4 && currentState <= 7 && (
         <div className="w-full text-center">
-          <p className="text-white text-lg">UPI SR is less than last month</p>
+          <p className=" text-lg text-[#ffb401]">
+            UPI SR is less than last month
+          </p>
         </div>
       )}
       {/* </AnimatePresence> */}

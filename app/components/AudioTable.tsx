@@ -38,7 +38,7 @@ const defaultColumns = [
   { key: "pg", label: "Payment Gateway", width: "w-1/3" },
   { key: "sr", label: "Success Rate", width: "w-1/3" },
   { key: "change", label: "Change", width: "w-1/3" },
-  { key: "volume", label: "Volume", width: "w-1/3" },
+  //   { key: "volume", label: "Volume", width: "w-1/3" },
 ];
 
 const AudioTable = ({
@@ -144,8 +144,11 @@ const AudioTable = ({
         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
           {visibleRows.map((row, index) => (
             <motion.tr
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{
+                opacity: 1,
+                height: "auto",
+              }}
               key={index}
               className={`transition-all duration-500`}
             >

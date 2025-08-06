@@ -3,14 +3,14 @@ export const getQuestion = (currentState: number): string => {
     return "What would you like to know?";
   }
   if (currentState >= 1 && currentState <= 2) {
-    return "What is the SR conversion for this week?";
+    return "What is the SR conversion for this month?"; // month
   }
 
-  if (currentState >= 3 && currentState <= 5) {
+  if (currentState >= 3 && currentState < 5) {
     return "Why is the SR conversion for this week 54%?";
   }
 
-  if (currentState >= 6) {
+  if (currentState >= 5) {
     return "Why?";
   }
   return "";
@@ -21,6 +21,7 @@ export const getAnswer = (currentState: number): string => {
     return "";
   }
   if (currentState >= 2 && currentState <= 5) {
+    return "";
     return "<p>The SR conversion for this month is <b>54%</b></p>";
   }
 
